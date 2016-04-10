@@ -14,7 +14,7 @@ void setup(){
 void loop(){
   
   valorLDR= analogRead(pinLDR);
-  
+  checkSMS();
   if(valorLDR > 700){
     if(!messageSent){
        sendMessage();
