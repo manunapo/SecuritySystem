@@ -1,31 +1,41 @@
-// Pin analogico de entrada para el LDR
-int pinLDR = 0;
- 
-// Variable donde se almacena el valor del LDR
-int valorLDR = 0; 
+#include <TimerOne.h>
 
-boolean messageSent = false;
+boolean isAlarmActive = false;
+boolean intrusionDetected = false;
 
 void setup(){
   Serial.begin(19200);
+ 
   setUpGprs();
   setUpSiren();
+  setUpDoorSensor();
+  delay(1000);
 }
 void loop(){
   
-  valorLDR= analogRead(pinLDR);
   checkSMS();
-  if(valorLDR > 700){
-    if(!messageSent){
-       sendMessage();
-       messageSent = true;
-       delay(5000);
-       alarmOn();
+  if(didStateChanged()){
+    if(getLastMsg().equals("Activar"))
+      isAlarmActive = true;
+    else if(getLastMsg().equals("Desactivar")){
+      Serial.print("a off");
+      isAlarmActive = false;
+      intrusionDetected = false;
+      alarmOff();
     }
-  }else{
-     messageSent = false;
-     alarmOff(); 
   }
-  // Esperar unos milisegundos antes de actualizar
+  
+        
+  if(isDoorOpen() && isAlarmActive){
+        
+    if(!intrusionDetected){
+      Serial.print("a on");  
+      intrusionDetected = true;
+        //sendMessage();
+        delay(5000);
+        alarmOn();
+      }  
+  }
+  
   delay(200);
 }

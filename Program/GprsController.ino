@@ -5,6 +5,9 @@ SoftwareSerial SIM900(7, 8);
 String outMessage = "Se activo el sensor";
 String destinationNumber = "298315550485";
 
+String lastMsg = "";
+boolean stateChanged = false;
+
 char incomingChars = 0;
 
 void setUpGprs(){
@@ -36,13 +39,40 @@ void hangUp(){
    delay(1000);
 }
 
-boolean checkSMS() // Receiving the SMS and extracting the Sender Mobile number & Message Text
-{
-  // Now we simply display any text that the GSM shield sends out on the serial monitor
-  if(SIM900.available() >0)
-  {
-    incomingChars=SIM900.read(); //Get the character from the cellular serial port.
-    Serial.print(incomingChars); //Print the incoming character to the terminal.
+void checkSMS(){
+  
+  int counter = 0;
+  String msgBody = "";
+  if(SIM900.available() >0){
+    while(SIM900.available() >0){
+      incomingChars = SIM900.read(); //Get the character from the cellular serial port.
+      if(counter == 6){
+        if(incomingChars == 'A' || incomingChars == 'c' || incomingChars == 't' || incomingChars == 'i' || incomingChars == 'v' || incomingChars == 'a' 
+        || incomingChars == 'r' || incomingChars == 'D'|| incomingChars == 'e' || incomingChars == 's' || incomingChars == 'a' || incomingChars == 'd')
+          msgBody += incomingChars;  
+      }
+      if( incomingChars == '"'){
+       counter++; 
+      }
+      Serial.print(incomingChars); //Print the incoming character to the terminal.
+    }
+    
+    if(msgBody.equals("Activar")){
+       lastMsg = "Activar"; 
+       stateChanged = true;
+    }else if(msgBody.equals("Desactivar")){
+       lastMsg = "Desactivar";
+       stateChanged = true; 
+    }
   }
+}
+
+boolean didStateChanged(){
+   return stateChanged; 
+}
+
+String getLastMsg(){
+  stateChanged = false;
+   return lastMsg;
 }
 
