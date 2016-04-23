@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-
+//TX,RX
 SoftwareSerial SIM900(7, 8);
 
 String outMessage = "Se activo el sensor";
