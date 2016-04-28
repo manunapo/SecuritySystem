@@ -22,6 +22,7 @@ void ISR_Blink(){
 void alarmOn(){
  digitalWrite(pinSound, HIGH);
  digitalWrite(pinLedAlarm, HIGH); 
+ interrupts();
  Timer1.initialize(2500000);         // Dispara cada 250 ms
  Timer1.attachInterrupt(ISR_Blink); // Activa la interrupcion y la asocia a ISR_Blink
 }
@@ -33,10 +34,21 @@ void alarmOff(){
 }
 
 void ledOn(){
-  digitalWrite(pinLedAlarm, HIGH); 
-  delay(2000);
+  digitalWrite(pinLedAlarm, HIGH);
 }
 
 void ledOff(){
   digitalWrite(pinLedAlarm, LOW); 
+}
+
+void makeLongSound(){
+  digitalWrite(pinSound, HIGH);
+  delay(2500);
+  digitalWrite(pinSound, LOW);
+}
+
+void makeShortSound(){
+  digitalWrite(pinSound, HIGH);
+  delay(1000);
+  digitalWrite(pinSound, LOW);
 }

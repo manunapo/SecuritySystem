@@ -76,3 +76,6 @@ String getLastMsg(){
    return lastMsg;
 }
 
+void checkSignal(){
+  SIM900.print("AT+CSQ\r");
+}
