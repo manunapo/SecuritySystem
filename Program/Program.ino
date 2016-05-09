@@ -45,6 +45,7 @@ void loop(){
       intrusionDetected = true;
         //sendMessage();
         delay(5000);
+        
         alarmOn();
       }  
   }

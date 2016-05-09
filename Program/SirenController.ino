@@ -1,5 +1,5 @@
-int pinSound = 13;
-int pinLedAlarm = 6;
+int pinSound = 6;
+int pinLedAlarm = 10;
 boolean ringing = false;
 
 void setUpSiren(){
