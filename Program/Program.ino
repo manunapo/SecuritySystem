@@ -6,11 +6,12 @@ boolean intrusionDetected = false;
 void setup(){
   Serial.begin(19200);
   setUpRemoteControl();
-  setUpGprs();
   setUpSiren();
   setUpDoorSensor();
+  setUpEEPROM();
   delay(1000);
 }
+
 void loop(){
   
   //Check remote controller
@@ -26,7 +27,7 @@ void loop(){
     
   }
   
-  //Check signal of GPRS
+  //Check signal of Gprs
   checkSignal();
   
   //Check income SMS

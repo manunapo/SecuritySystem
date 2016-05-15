@@ -43,12 +43,16 @@ void ledOff(){
 
 void makeLongSound(){
   digitalWrite(pinSound, HIGH);
-  delay(2500);
+  delay(1000);
   digitalWrite(pinSound, LOW);
 }
 
 void makeShortSound(){
   digitalWrite(pinSound, HIGH);
-  delay(1000);
+  delay(250);
+  digitalWrite(pinSound, LOW);
+  delay(100);
+  digitalWrite(pinSound, HIGH);
+  delay(250);
   digitalWrite(pinSound, LOW);
 }
