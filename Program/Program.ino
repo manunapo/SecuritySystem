@@ -6,8 +6,8 @@ boolean intrusionDetected = false;
 void setup(){
   Serial.begin(19200);
   setUpRemoteControl();
-  setUpSiren();
   setUpDoorSensor();
+  setUpSiren();
   setUpEEPROM();
   delay(1000);
 }
@@ -51,7 +51,7 @@ void loop(){
       }  
   }
   
-  delay(200);
+  //delay(200);
 }
 
 void activate(){
@@ -61,7 +61,7 @@ void activate(){
 }
 void desactivate(){
       isAlarmActive = false;
+      alarmOff();
       makeShortSound();
       intrusionDetected = false;
-      alarmOff();
 }
