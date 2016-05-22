@@ -38,7 +38,15 @@ void hangUp(){
    SIM900.println("ATH");
    delay(1000);
 }
-
+/*
+void checkSMS(){
+  if(SIM900.available() >0){
+  while(SIM900.available() >0){
+      Serial.print(SIM900.read());
+  }
+  }
+}
+*/
 void checkSMS(){
   
   int counter = 0;
@@ -47,23 +55,27 @@ void checkSMS(){
     while(SIM900.available() >0){
       incomingChars = SIM900.read(); //Get the character from the cellular serial port.
       if(counter == 6){
-        if(incomingChars == 'A' || incomingChars == 'c' || incomingChars == 't' || incomingChars == 'i' || incomingChars == 'v' || incomingChars == 'a' 
-        || incomingChars == 'r' || incomingChars == 'D'|| incomingChars == 'e' || incomingChars == 's' || incomingChars == 'a' || incomingChars == 'd')
-          msgBody += incomingChars;  
+        if(incomingChars == 'A' || incomingChars == 'c' || incomingChars == 't' || 
+          incomingChars == 'i' || incomingChars == 'v' || incomingChars == 'a' || 
+          incomingChars == 'r' || incomingChars == 'D'|| incomingChars == 'e' || 
+          incomingChars == 's' || incomingChars == 'a' || incomingChars == 'd')
+          msgBody += incomingChars;
+          
+          Serial.print("msh:");Serial.println(msgBody);
       }
       if( incomingChars == '"'){
        counter++; 
       }
       Serial.print(incomingChars); //Print the incoming character to the terminal.
-    }
-    
+    }/*
     if(msgBody.equals("Activar")){
+      Serial.println("LLEGO ACTIVAR");
        lastMsg = "Activar"; 
        stateChanged = true;
     }else if(msgBody.equals("Desactivar")){
        lastMsg = "Desactivar";
        stateChanged = true; 
-    }
+    }*/
   }
 }
 
@@ -78,4 +90,7 @@ String getLastMsg(){
 
 void checkSignal(){
   SIM900.print("AT+CSQ\r");
+  delay(1000);
+  while(SIM900.available() > 0)
+      Serial.write(SIM900.read());
 }

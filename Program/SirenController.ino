@@ -13,7 +13,7 @@ void setUpSiren(){
 }
 
 void ISR_Blink(){
-  if(intrusion){   
+  if(intrusion){  
       if(ringing){
           digitalWrite(pinSound, LOW);
           digitalWrite(pinLedAlarm, LOW);
@@ -45,7 +45,7 @@ void ledOff(){
 
 void makeLongSound(){
   digitalWrite(pinSound, HIGH);
-  delay(1000);
+  delay(250);
   digitalWrite(pinSound, LOW);
 }
 

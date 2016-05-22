@@ -2,7 +2,8 @@
 int doorSensorPin = 2;
 
 void setUpDoorSensor(){
-  pinMode(doorSensorPin, INPUT_PULLUP); 
+  //pinMode(doorSensorPin, INPUT_PULLUP); 
+  pinMode(doorSensorPin, INPUT); 
 }
 
 boolean isDoorOpen(){
