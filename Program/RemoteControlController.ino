@@ -11,26 +11,25 @@ void setUpRemoteControl(){
     pinMode(pinAlert, INPUT);
 }
 
-//Return 0 if no action detected,
-//1 if key A was pressed.
-//2 if key D was pressed.
-//3 if key B was pressed.
-int checkKeys(){
+void checkKeys(){
     int toReturn = 0;
     if(digitalRead(pinValidTrans)){  
         if (digitalRead(pinActivate) && lastDetected != 1){
-            toReturn = 1;
+            stateActivate();
             lastDetected = 1;
         }
         if (digitalRead(pinDesactivate) && lastDetected != 2) {
-            toReturn = 2;
+            stateDesactivate();
             lastDetected = 2;            
         }
         if (digitalRead(pinAlert) && lastDetected != 3){
-            toReturn = 3;
+            //toReturn = 3;
             lastDetected = 3;            
         }
      } 
-     return toReturn;
+}
+
+void resetKeys(){
+  lastDetected = 0;
 }
 

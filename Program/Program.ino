@@ -3,52 +3,44 @@
 boolean isAlarmActive = false;
 boolean intrusionDetected = false;
 
+unsigned long Timer;
+unsigned long checkTime = 10000UL;
+
 void setup(){
   Serial.begin(19200);
-  //setUpRemoteControl();
-  //setUpDoorSensor();
-  //setUpSiren();
-  //setUpEEPROM();
+  setUpRemoteControl();
+  setUpDoorSensor();
+  setUpSiren();
+  setUpEEPROM();
   setUpGprs();
+  Timer = millis();
 }
 boolean start = true;
 void loop(){
-  /*
+  
   //Check remote controller
-  int key = checkKeys();
-  if(key != 0) {
-    if( key == 1){
-      Serial.println("Llego activar desde CR");
-      activate();
-    }else if(key == 2){
-      Serial.println("Llego desactivar desde CR");
-      desactivate();
-    }else if(key == 3){
-      
-    }
-  }
-/*
-  unsigned long Timer;
-  if(start){
-    Timer = millis ();
-    start = false;
-  }
-  if( millis() - Timer > 5000UL){
-  //Check signal of Gprs
-  //checkSignal();
-    start = true;
-  }
-  */
+  checkKeys();
+
   //Check income SMS
   checkSMS();
-  /*if(didStateChanged()){
-    if(getLastMsg().equals("Activar")){
-      Serial.println("Llego activar desde SMS");
+
+  //Check shared state, if it was chaged by keys or sms then 
+  //activate or desactivate the system.
+  if(stateHasChanged()){
+    if(stateIsActivated()){
       activate();
-    }else if(getLastMsg().equals("Desactivar")){
-      Serial.println("Llego desactivar desde SMS");
+    }
+    if(stateIsDesactivated()){
       desactivate();
     }
+    stateRead();
+    resetKeys();
+  }
+
+  if( millis() - Timer > checkTime){
+  //Check signal of Gprs
+    checkSignal();
+    Timer = millis();
   }
   
   //Check intrusion
@@ -59,7 +51,7 @@ void loop(){
         alarmOn();
       }  
   }
-  */
+
 }
 
 void activate(){

@@ -1,17 +1,16 @@
 #include <SoftwareSerial.h>
 //TX,RX
 SoftwareSerial SIM900(7, 8);
+int pinLedSignal_1 = 11;
+int pinLedSignal_2 = 12;
 
 String outMessage = "Se activo el sensor";
 String destinationNumber = "298315550485";
 
-String lastMsg = "";
-boolean stateChanged = false;
-
-char incomingChars = 0;
-
 void setUpGprs(){
   SIM900.begin(19200);
+  pinMode(pinLedSignal_1, OUTPUT);
+  pinMode(pinLedSignal_2, OUTPUT);
   SIM900.print("AT+CMGF=1\r");  
   delay(1000);
   SIM900.print("AT+CNMI=1,2,0,0,0\r"); 
@@ -38,59 +37,76 @@ void hangUp(){
    SIM900.println("ATH");
    delay(1000);
 }
-/*
+
 void checkSMS(){
-  if(SIM900.available() >0){
-  while(SIM900.available() >0){
-      Serial.print(SIM900.read());
-  }
-  }
-}
-*/
-void checkSMS(){
-  
+  char incomingChars;
   int counter = 0;
   String msgBody = "";
   if(SIM900.available() >0){
     while(SIM900.available() >0){
       incomingChars = SIM900.read(); //Get the character from the cellular serial port.
       if(counter == 6){
-        if(incomingChars == 'A' || incomingChars == 'c' || incomingChars == 't' || 
-          incomingChars == 'i' || incomingChars == 'v' || incomingChars == 'a' || 
-          incomingChars == 'r' || incomingChars == 'D'|| incomingChars == 'e' || 
-          incomingChars == 's' || incomingChars == 'a' || incomingChars == 'd')
+        Serial.print(incomingChars);
+        if(incomingChars != '\n' && incomingChars != '\r'){
           msgBody += incomingChars;
-          
-          Serial.print("msh:");Serial.println(msgBody);
+        }      
       }
       if( incomingChars == '"'){
        counter++; 
       }
       Serial.print(incomingChars); //Print the incoming character to the terminal.
-    }/*
-    if(msgBody.equals("Activar")){
-      Serial.println("LLEGO ACTIVAR");
-       lastMsg = "Activar"; 
-       stateChanged = true;
-    }else if(msgBody.equals("Desactivar")){
-       lastMsg = "Desactivar";
-       stateChanged = true; 
-    }*/
+    }
+    Serial.println(msgBody);
+    msgBody.toLowerCase();
+    boolean activate = msgBody.equals("activar");
+    boolean desactivate = msgBody.equals("desactivar");
+    if(activate){
+      stateActivate();
+    }
+    if(desactivate){
+      stateDesactivate();   
+    }
   }
-}
-
-boolean didStateChanged(){
-   return stateChanged; 
-}
-
-String getLastMsg(){
-  stateChanged = false;
-   return lastMsg;
 }
 
 void checkSignal(){
   SIM900.print("AT+CSQ\r");
-  delay(1000);
-  while(SIM900.available() > 0)
-      Serial.write(SIM900.read());
+  delay(100);
+  char incomingChars;
+  boolean found = false;
+  int signalInt = 0;
+  while(SIM900.available() > 0){
+      incomingChars = SIM900.read();
+      Serial.print(incomingChars);
+      if(incomingChars == ','){
+        found = false;
+      }
+      if(found){
+        if(incomingChars == '0' ||
+        incomingChars == '1' ||
+        incomingChars == '2' ||
+        incomingChars == '3' ||
+        incomingChars == '4' ||
+        incomingChars == '5' ||
+        incomingChars == '6' ||
+        incomingChars == '7' ||
+        incomingChars == '8' ||
+        incomingChars == '9')
+        signalInt = signalInt * 10 + (incomingChars - '0');
+      }
+      if(incomingChars == ':'){
+        found = true;
+      }
+  }
+  Serial.print("Signal: ");Serial.println(signalInt);
+  if( signalInt > 2 && signalInt < 10){
+    digitalWrite(pinLedSignal_1, HIGH);
+    digitalWrite(pinLedSignal_2, LOW);
+  }else if(signalInt > 10){
+    digitalWrite(pinLedSignal_1, HIGH);
+    digitalWrite(pinLedSignal_2, HIGH);
+  }else{
+    digitalWrite(pinLedSignal_1, LOW);
+    digitalWrite(pinLedSignal_2, LOW);
+  }
 }
