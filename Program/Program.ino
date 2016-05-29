@@ -3,8 +3,8 @@
 boolean isAlarmActive = false;
 boolean intrusionDetected = false;
 
-unsigned long Timer;
-unsigned long checkTime = 10000UL;
+unsigned long updateSignalTimer;
+unsigned long updateSignalTime = 10000UL;
 
 void setup(){
   Serial.begin(19200);
@@ -13,7 +13,7 @@ void setup(){
   setUpSiren();
   setUpEEPROM();
   setUpGprs();
-  Timer = millis();
+  updateSignalTimer = millis();
 }
 boolean start = true;
 void loop(){
@@ -37,14 +37,14 @@ void loop(){
     resetKeys();
   }
 
-  if( millis() - Timer > checkTime){
+  if( millis() - updateSignalTimer > updateSignalTime){
   //Check signal of Gprs
     checkSignal();
-    Timer = millis();
+    updateSignalTimer = millis();
   }
   
   //Check intrusion
-  if(isDoorOpen() && isAlarmActive){
+  if(isAnyDoorOpen() && isAlarmActive){
     if(!intrusionDetected){
       intrusionDetected = true;
         //sendMessage();
@@ -56,6 +56,7 @@ void loop(){
 
 void activate(){
       Serial.println("Activate");
+      updateSensors();
       isAlarmActive = true;
       ledOn();
       makeLongSound();

@@ -4,7 +4,7 @@ SoftwareSerial SIM900(7, 8);
 int pinLedSignal_1 = 11;
 int pinLedSignal_2 = 12;
 
-String outMessage = "Se activo el sensor";
+String outMessage = "Se activo la alarma";
 String destinationNumber = "298315550485";
 
 void setUpGprs(){
@@ -46,7 +46,6 @@ void checkSMS(){
     while(SIM900.available() >0){
       incomingChars = SIM900.read(); //Get the character from the cellular serial port.
       if(counter == 6){
-        Serial.print(incomingChars);
         if(incomingChars != '\n' && incomingChars != '\r'){
           msgBody += incomingChars;
         }      
@@ -55,16 +54,17 @@ void checkSMS(){
        counter++; 
       }
       Serial.print(incomingChars); //Print the incoming character to the terminal.
-    }
-    Serial.println(msgBody);
+    } 
     msgBody.toLowerCase();
     boolean activate = msgBody.equals("activar");
     boolean desactivate = msgBody.equals("desactivar");
     if(activate){
       stateActivate();
+      Serial.print("Llego activacion: ");Serial.println(msgBody);
     }
     if(desactivate){
       stateDesactivate();   
+      Serial.print("Llego desactivacion: ");Serial.println(msgBody);
     }
   }
 }
@@ -77,7 +77,7 @@ void checkSignal(){
   int signalInt = 0;
   while(SIM900.available() > 0){
       incomingChars = SIM900.read();
-      Serial.print(incomingChars);
+      //Serial.print(incomingChars);
       if(incomingChars == ','){
         found = false;
       }
@@ -102,7 +102,7 @@ void checkSignal(){
   if( signalInt > 2 && signalInt < 10){
     digitalWrite(pinLedSignal_1, HIGH);
     digitalWrite(pinLedSignal_2, LOW);
-  }else if(signalInt > 10){
+  }else if(signalInt >= 10){
     digitalWrite(pinLedSignal_1, HIGH);
     digitalWrite(pinLedSignal_2, HIGH);
   }else{
